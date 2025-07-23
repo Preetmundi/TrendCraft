@@ -14,7 +14,176 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          credits_remaining: number | null
+          display_name: string | null
+          id: string
+          subscription_tier: string | null
+          updated_at: string | null
+          user_id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          credits_remaining?: number | null
+          display_name?: string | null
+          id?: string
+          subscription_tier?: string | null
+          updated_at?: string | null
+          user_id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          credits_remaining?: number | null
+          display_name?: string | null
+          id?: string
+          subscription_tier?: string | null
+          updated_at?: string | null
+          user_id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          input_data: Json
+          input_type: string
+          output_video_url: string | null
+          processing_progress: number | null
+          status: string | null
+          title: string
+          trend_data: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          input_data: Json
+          input_type: string
+          output_video_url?: string | null
+          processing_progress?: number | null
+          status?: string | null
+          title: string
+          trend_data?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          input_data?: Json
+          input_type?: string
+          output_video_url?: string | null
+          processing_progress?: number | null
+          status?: string | null
+          title?: string
+          trend_data?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      trending_data: {
+        Row: {
+          description: string | null
+          detected_at: string | null
+          growth_rate: number | null
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          platform: string
+          title: string
+          trend_id: string
+          trend_type: string
+          updated_at: string | null
+          usage_count: number | null
+        }
+        Insert: {
+          description?: string | null
+          detected_at?: string | null
+          growth_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          platform: string
+          title: string
+          trend_id: string
+          trend_type: string
+          updated_at?: string | null
+          usage_count?: number | null
+        }
+        Update: {
+          description?: string | null
+          detected_at?: string | null
+          growth_rate?: number | null
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          platform?: string
+          title?: string
+          trend_id?: string
+          trend_type?: string
+          updated_at?: string | null
+          usage_count?: number | null
+        }
+        Relationships: []
+      }
+      video_assets: {
+        Row: {
+          asset_type: string
+          created_at: string | null
+          duration: number | null
+          file_path: string
+          file_size: number | null
+          id: string
+          processing_status: string | null
+          project_id: string
+          resolution: string | null
+        }
+        Insert: {
+          asset_type: string
+          created_at?: string | null
+          duration?: number | null
+          file_path: string
+          file_size?: number | null
+          id?: string
+          processing_status?: string | null
+          project_id: string
+          resolution?: string | null
+        }
+        Update: {
+          asset_type?: string
+          created_at?: string | null
+          duration?: number | null
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          processing_status?: string | null
+          project_id?: string
+          resolution?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
