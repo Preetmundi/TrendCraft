@@ -1,5 +1,5 @@
--- Fix security definer functions by setting search_path
-CREATE OR REPLACE FUNCTION public.update_updated_at_column()
+ Fix security definer functions by setting search_path
+CREAT--E OR REPLACE FUNCTION public.update_updated_at_column()
 RETURNS TRIGGER 
 LANGUAGE plpgsql 
 SECURITY DEFINER 
