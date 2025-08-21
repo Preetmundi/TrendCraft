@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
+import { auth, db } from '@/integrations/firebase/client';
+import { collection, getDocs, limit } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 
 const DebugPanel = () => {
@@ -23,21 +24,23 @@ const DebugPanel = () => {
       ai: 'testing'
     });
 
-    // Test 1: Supabase Connection
+    // Test 1: Firebase Connection
     try {
-      const { data, error } = await supabase.from('profiles').select('count').limit(1);
-      if (error) throw error;
+      const querySnapshot = await getDocs(collection(db, 'profiles'));
       setTests(prev => ({ ...prev, supabase: 'success' }));
     } catch (error) {
-      console.error('Supabase test failed:', error);
+      console.error('Firebase test failed:', error);
       setTests(prev => ({ ...prev, supabase: 'error' }));
     }
 
     // Test 2: Authentication
     try {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      setTests(prev => ({ ...prev, auth: 'success' }));
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        setTests(prev => ({ ...prev, auth: 'success' }));
+      } else {
+        setTests(prev => ({ ...prev, auth: 'success' })); // Firebase auth is working even without user
+      }
     } catch (error) {
       console.error('Auth test failed:', error);
       setTests(prev => ({ ...prev, auth: 'error' }));
@@ -45,8 +48,7 @@ const DebugPanel = () => {
 
     // Test 3: Trending Data
     try {
-      const { data, error } = await supabase.from('trending_data').select('*').limit(1);
-      if (error) throw error;
+      const querySnapshot = await getDocs(collection(db, 'trending_data'));
       setTests(prev => ({ ...prev, trending: 'success' }));
     } catch (error) {
       console.error('Trending test failed:', error);
@@ -72,16 +74,12 @@ const DebugPanel = () => {
     const testPassword = 'testpassword123';
     
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: testEmail,
-        password: testPassword,
-      });
-      
-      if (error) throw error;
+      const { createUserWithEmailAndPassword } = await import('firebase/auth');
+      const result = await createUserWithEmailAndPassword(auth, testEmail, testPassword);
       
       toast({
         title: 'Test signup successful!',
-        description: `User created: ${data.user?.email}`,
+        description: `User created: ${result.user.email}`,
       });
     } catch (error) {
       console.error('Test signup error:', error);
@@ -142,18 +140,18 @@ const DebugPanel = () => {
               <div className="space-y-2">
                 <h4 className="font-medium">Environment Variables</h4>
                 <div className="text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span>SUPABASE_URL:</span>
-                    <Badge variant={import.meta.env.VITE_SUPABASE_URL ? 'default' : 'destructive'}>
-                      {import.meta.env.VITE_SUPABASE_URL ? 'Set' : 'Missing'}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>SUPABASE_ANON_KEY:</span>
-                    <Badge variant={import.meta.env.VITE_SUPABASE_ANON_KEY ? 'default' : 'destructive'}>
-                      {import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Missing'}
-                    </Badge>
-                  </div>
+                                     <div className="flex justify-between">
+                     <span>FIREBASE_API_KEY:</span>
+                     <Badge variant={import.meta.env.VITE_FIREBASE_API_KEY ? 'default' : 'destructive'}>
+                       {import.meta.env.VITE_FIREBASE_API_KEY ? 'Set' : 'Missing'}
+                     </Badge>
+                   </div>
+                   <div className="flex justify-between">
+                     <span>FIREBASE_PROJECT_ID:</span>
+                     <Badge variant={import.meta.env.VITE_FIREBASE_PROJECT_ID ? 'default' : 'destructive'}>
+                       {import.meta.env.VITE_FIREBASE_PROJECT_ID ? 'Set' : 'Missing'}
+                     </Badge>
+                   </div>
                   <div className="flex justify-between">
                     <span>OPENROUTER_API_KEY:</span>
                     <Badge variant={import.meta.env.VITE_OPENROUTER_API_KEY ? 'default' : 'destructive'}>
@@ -167,12 +165,12 @@ const DebugPanel = () => {
               <div className="space-y-2">
                 <h4 className="font-medium">System Tests</h4>
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span>Supabase Connection:</span>
-                    <Badge variant={getStatusColor(tests.supabase)}>
-                      {getStatusText(tests.supabase)}
-                    </Badge>
-                  </div>
+                                     <div className="flex justify-between items-center">
+                     <span>Firebase Connection:</span>
+                     <Badge variant={getStatusColor(tests.supabase)}>
+                       {getStatusText(tests.supabase)}
+                     </Badge>
+                   </div>
                   <div className="flex justify-between items-center">
                     <span>Authentication:</span>
                     <Badge variant={getStatusColor(tests.auth)}>

@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Play, Music, Hash, Eye } from "lucide-react";
-import { trendingApi } from "@/services/api";
+import { firebaseApi } from "@/services/firebase-api";
 import { useAuth } from "./AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 
@@ -15,10 +15,10 @@ const TrendingSection = () => {
 
   useEffect(() => {
     const fetchTrendingData = async () => {
-      try {
-        const data = await trendingApi.getTrendingData();
-        setTrendingItems(data.slice(0, 4)); // Show first 4 trending items
-      } catch (error) {
+             try {
+         const data = await firebaseApi.getTrendingData();
+         setTrendingItems(data.slice(0, 4)); // Show first 4 trending items
+       } catch (error) {
         console.error('Error fetching trending data:', error);
         // Fallback to mock data if API fails
         setTrendingItems([
