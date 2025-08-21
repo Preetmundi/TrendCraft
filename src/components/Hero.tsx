@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Upload, Sparkles, TrendingUp, Video } from "lucide-react";
+import { AuthModal } from "./AuthModal";
 
 const Hero = () => {
   return (
@@ -23,8 +24,8 @@ const Hero = () => {
             <span className="text-xl font-bold text-foreground">TrendCraft</span>
           </div>
           <div className="flex space-x-4">
-            <Button variant="ghost">Sign In</Button>
-            <Button variant="default">Get Started</Button>
+            <AuthModal trigger={<Button variant="ghost">Sign In</Button>} />
+            <AuthModal trigger={<Button variant="default">Get Started</Button>} />
           </div>
         </nav>
 

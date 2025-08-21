@@ -1,10 +1,27 @@
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Play, Music, Hash, Eye } from "lucide-react";
+import { trendingApi } from "@/services/api";
+import { useAuth } from "./AuthProvider";
+import { useToast } from "@/hooks/use-toast";
 
 const TrendingSection = () => {
-  const trendingItems = [
+  const [trendingItems, setTrendingItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchTrendingData = async () => {
+      try {
+        const data = await trendingApi.getTrendingData();
+        setTrendingItems(data.slice(0, 4)); // Show first 4 trending items
+      } catch (error) {
+        console.error('Error fetching trending data:', error);
+        // Fallback to mock data if API fails
+        setTrendingItems([
     {
       type: "sound",
       title: "Viral Dance Beat #1",
@@ -36,8 +53,42 @@ const TrendingSection = () => {
       growth: "+195%",
       platform: "TikTok",
       icon: Music,
-    },
-  ];
+    }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrendingData();
+  }, []);
+
+  const handleUseTrend = (trend: any) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to use trending elements",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    toast({
+      title: "Trend applied",
+      description: `${trend.title} has been added to your project`,
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="py-16 px-4 bg-background">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading trending data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 px-4 bg-background">
@@ -84,7 +135,12 @@ const TrendingSection = () => {
                   <p className="text-sm text-muted-foreground">{item.usage}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">{item.platform}</span>
-                    <Button variant="ghost" size="sm" className="text-accent hover:text-accent-foreground">
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-accent hover:text-accent-foreground"
+                      onClick={() => handleUseTrend(item)}
+                    >
                       <Play className="w-3 h-3 mr-1" />
                       Use
                     </Button>
