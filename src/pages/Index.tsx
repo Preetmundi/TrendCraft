@@ -3,6 +3,7 @@ import VideoUpload from "@/components/VideoUpload";
 import TrendingSection from "@/components/TrendingSection";
 import EditorPreview from "@/components/EditorPreview";
 import AIContentGenerator from "@/components/AIContentGenerator";
+import DebugPanel from "@/components/DebugPanel";
 
 const Index = () => {
   return (
@@ -12,6 +13,7 @@ const Index = () => {
       <AIContentGenerator />
       <TrendingSection />
       <EditorPreview />
+      <DebugPanel />
     </div>
   );
 };
