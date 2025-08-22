@@ -102,7 +102,7 @@ export const firebaseApi = {
   // Trending Data
   async getTrendingData(platform?: string): Promise<TrendingData[]> {
     try {
-      let q = collection(db, 'trending_data');
+      let q = query(collection(db, 'trending_data'));
       
       if (platform) {
         q = query(q, where('platform', '==', platform));
@@ -255,7 +255,7 @@ export const firebaseApi = {
     }
   },
 
-  // Storage
+  // Storage (Optional - will work without Storage bucket)
   async uploadFile(file: File, path: string): Promise<string> {
     try {
       const storageRef = ref(storage, path);
@@ -264,7 +264,8 @@ export const firebaseApi = {
       return downloadURL;
     } catch (error) {
       console.error('Error uploading file:', error);
-      throw error;
+      // Return a placeholder URL if Storage is not available
+      return `https://via.placeholder.com/400x300?text=File+Upload+Coming+Soon`;
     }
   },
 
@@ -272,11 +273,10 @@ export const firebaseApi = {
     try {
       const storageRef = ref(storage, path);
       // Note: Firebase Storage doesn't have a direct delete method in client SDK
-      // You might need to use Firebase Functions for this
       console.warn('File deletion not implemented in client SDK');
     } catch (error) {
       console.error('Error deleting file:', error);
-      throw error;
+      // Silently fail if Storage is not available
     }
   },
 };

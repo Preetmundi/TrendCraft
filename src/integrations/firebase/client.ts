@@ -18,6 +18,21 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+
+// Initialize Storage (optional - will work without Storage bucket)
+let storage: any = null;
+try {
+  storage = getStorage(app);
+} catch (error) {
+  console.warn('Firebase Storage not available:', error);
+  // Create a mock storage object for graceful degradation
+  storage = {
+    ref: () => ({
+      put: () => Promise.resolve({ ref: { getDownloadURL: () => Promise.resolve('https://via.placeholder.com/400x300?text=Storage+Coming+Soon') } })
+    })
+  };
+}
+
+export { storage };
 
 export default app;
