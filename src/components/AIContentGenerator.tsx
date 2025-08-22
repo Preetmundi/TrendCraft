@@ -39,6 +39,17 @@ const AIContentGenerator = () => {
       return;
     }
 
+    // Check if OpenRouter API key is configured
+    const hasApiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+    if (!hasApiKey) {
+      toast({
+        title: 'AI Service Not Configured',
+        description: 'Please set VITE_OPENROUTER_API_KEY in your environment variables to use AI features',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsGenerating(true);
     try {
       const content = await aiService.generateVideoContent({
@@ -77,7 +88,9 @@ const AIContentGenerator = () => {
         <div className="text-center mb-12">
           <div className="inline-flex items-center space-x-2 bg-card/20 backdrop-blur-glass border border-white/10 rounded-full px-4 py-2 mb-6">
             <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm text-muted-foreground">Powered by OpenRouter AI</span>
+            <span className="text-sm text-muted-foreground">
+              {import.meta.env.VITE_OPENROUTER_API_KEY ? 'Powered by OpenRouter AI' : 'AI Service Not Configured'}
+            </span>
           </div>
           
           <h2 className="text-4xl font-bold text-foreground mb-4">

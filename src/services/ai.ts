@@ -41,7 +41,7 @@ class AIService {
     options: AIRequestOptions = {}
   ): Promise<string> {
     if (!OPENROUTER_API_KEY) {
-      throw new Error('OpenRouter API key not configured');
+      throw new Error('OpenRouter API key not configured. Please set VITE_OPENROUTER_API_KEY in your environment variables.');
     }
 
     const response = await fetch(`${OPENROUTER_API_URL}/chat/completions`, {

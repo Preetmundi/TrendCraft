@@ -55,18 +55,18 @@ const DebugPanel = () => {
       setTests(prev => ({ ...prev, trending: 'error' }));
     }
 
-    // Test 4: AI Service
-    try {
-      const hasApiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-      if (hasApiKey) {
-        setTests(prev => ({ ...prev, ai: 'success' }));
-      } else {
-        throw new Error('API key not found');
-      }
-    } catch (error) {
-      console.error('AI test failed:', error);
-      setTests(prev => ({ ...prev, ai: 'error' }));
-    }
+               // Test 4: AI Service
+           try {
+             const hasApiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+             if (hasApiKey && hasApiKey !== 'your_openrouter_api_key_here') {
+               setTests(prev => ({ ...prev, ai: 'success' }));
+             } else {
+               setTests(prev => ({ ...prev, ai: 'warning' }));
+             }
+           } catch (error) {
+             console.error('AI test failed:', error);
+             setTests(prev => ({ ...prev, ai: 'error' }));
+           }
   };
 
   const testSignUp = async () => {
@@ -95,6 +95,7 @@ const DebugPanel = () => {
     switch (status) {
       case 'success': return 'default';
       case 'error': return 'destructive';
+      case 'warning': return 'secondary';
       case 'testing': return 'secondary';
       default: return 'outline';
     }
@@ -104,6 +105,7 @@ const DebugPanel = () => {
     switch (status) {
       case 'success': return '✅ Working';
       case 'error': return '❌ Failed';
+      case 'warning': return '⚠️ Not Configured';
       case 'testing': return '🔄 Testing...';
       default: return '⏳ Pending';
     }
